@@ -1,7 +1,7 @@
 django-skel
 ===========
 
-*A modern Django 1.5 project skeleton.*
+*A modern Django 1.6 project skeleton.*
 
 .. image:: _static/skel.jpg
 
