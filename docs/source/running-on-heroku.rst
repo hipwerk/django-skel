@@ -151,6 +151,13 @@ the optional email environment variables as well::
     ``EMAIL_HOST`` and ``EMAIL_PORT`` will default to the proper settings for
     Google apps, so if you're using that--feel free to leave those out.
 
+Finally set ``ALLOWED_HOSTS`` to '\*.herokuapp.com'
+
+    $ heroku config:add ALLOWED_HOSTS='\*.herokuapp.com'
+
+.. note::
+    By default ``ALLOWED_HOSTS`` will be set to '*' that will match
+    anything. Read more about security implications at `django docs <https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts>`_
 
 Step 4 - Spin It Up!
 --------------------
