@@ -63,7 +63,7 @@ of these, and requires most of them to function::
     $ heroku addons:add heroku-postgresql:dev
     $ heroku addons:add scheduler:standard
     $ heroku addons:add memcachier:dev
-    $ heroku addons:add newrelic:standard
+    $ heroku addons:add newrelic
     $ heroku addons:add pgbackups:auto-month
     $ heroku addons:add sentry:developer
 
