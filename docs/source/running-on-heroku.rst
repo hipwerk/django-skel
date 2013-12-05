@@ -63,7 +63,7 @@ of these, and requires most of them to function::
     $ heroku addons:add heroku-postgresql:dev
     $ heroku addons:add scheduler:standard
     $ heroku addons:add memcachier:dev
-    $ heroku addons:add newrelic:standard
+    $ heroku addons:add newrelic
     $ heroku addons:add pgbackups:auto-month
     $ heroku addons:add sentry:developer
 
@@ -151,6 +151,13 @@ the optional email environment variables as well::
     ``EMAIL_HOST`` and ``EMAIL_PORT`` will default to the proper settings for
     Google apps, so if you're using that--feel free to leave those out.
 
+Finally set ``ALLOWED_HOSTS`` to '\*.herokuapp.com'
+
+    $ heroku config:add ALLOWED_HOSTS='\*.herokuapp.com'
+
+.. note::
+    By default ``ALLOWED_HOSTS`` will be set to '*' that will match
+    anything. Read more about security implications at `django docs <https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts>`_
 
 Step 4 - Spin It Up!
 --------------------
