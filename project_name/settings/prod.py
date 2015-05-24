@@ -2,12 +2,9 @@
 
 
 from os import environ
-
-from memcacheify import memcacheify
-from postgresify import postgresify
-from S3 import CallingFormat
-
+from os.path import join, normpath
 from common import *
+from kombu import Exchange, Queue
 
 
 ########## EMAIL CONFIGURATION
@@ -15,13 +12,13 @@ from common import *
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-EMAIL_HOST = environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_HOST = environ.get('EMAIL_HOST', '')
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host-password
 EMAIL_HOST_PASSWORD = environ.get('EMAIL_HOST_PASSWORD', '')
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host-user
-EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER', 'your_email@example.com')
+EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER', '')
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-port
 EMAIL_PORT = environ.get('EMAIL_PORT', 587)
@@ -38,15 +35,27 @@ SERVER_EMAIL = EMAIL_HOST_USER
 
 
 ########## DATABASE CONFIGURATION
-DATABASES = postgresify()
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': environ.get('DB_NAME', ''),
+        'USER': environ.get('DB_USER', ''),
+        'PASSWORD': environ.get('DB_PASS', ''),
+        'HOST': environ.get('DB_host', ''),
+        'PORT': environ.get('DB_PORT', ''),
+    }
+}
 ########## END DATABASE CONFIGURATION
 
 
 ########## CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
-CACHES = memcacheify()
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 ########## END CACHE CONFIGURATION
-
 
 ########## CELERY CONFIGURATION
 # See: http://docs.celeryproject.org/en/latest/configuration.html#broker-transport
@@ -72,15 +81,18 @@ BROKER_URL = environ.get('RABBITMQ_URL') or environ.get('CLOUDAMQP_URL')
 
 # See: http://docs.celeryproject.org/en/latest/configuration.html#celery-result-backend
 CELERY_RESULT_BACKEND = 'amqp'
+
+CELERY_QUEUES = (
+    Queue('{{ project_name }}', Exchange('{{ project_name }}'), routing_key='{{ project_name }}'),
+)
+CELERY_DEFAULT_QUEUE = '{{ project_name }}'
+CELERY_DEFAULT_EXCHANGE_TYPE = 'direct'
+CELERY_DEFAULT_ROUTING_KEY = '{{ project_name }}'
+
 ########## END CELERY CONFIGURATION
 
 
 ########## STORAGE CONFIGURATION
-# See: http://django-storages.readthedocs.org/en/latest/index.html
-INSTALLED_APPS += (
-    'storages',
-)
-
 # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
 STATICFILES_STORAGE = DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
@@ -134,4 +146,3 @@ SECRET_KEY = environ.get('SECRET_KEY', SECRET_KEY)
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', '*').split(',')
 ########## END ALLOWED HOST CONFIGURATION
-
